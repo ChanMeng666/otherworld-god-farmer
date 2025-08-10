@@ -1,20 +1,24 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy, ViewContainerRef, ComponentRef } from '@angular/core';
 import * as PIXI from 'pixi.js';
 import { GameDataService } from '../services/game-data.service';
 import { TimeService } from '../services/time.service';
 import { WorldService } from '../services/world.service';
 import { InventoryService } from '../services/inventory.service';
 import { CropService } from '../services/crop.service';
+import { EmojiRendererService } from '../services/emoji-renderer.service';
 import { Subscription } from 'rxjs';
 import { ToolType } from '../models/player.model';
 import { WorldData } from '../models/world.model';
+import { ContextMenuComponent, MenuAction } from '../components/context-menu.component';
 
 @Component({
   selector: 'app-game-canvas',
   standalone: true,
+  imports: [ContextMenuComponent],
   template: `
     <div class="game-container">
       <canvas #gameCanvas></canvas>
+      <app-context-menu #contextMenu (actionSelected)="handleMenuAction($event)"></app-context-menu>
     </div>
   `,
   styles: [`
@@ -33,12 +37,13 @@ import { WorldData } from '../models/world.model';
 })
 export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('gameCanvas', { static: false }) gameCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('contextMenu', { static: false }) contextMenu!: ContextMenuComponent;
   
   private app!: PIXI.Application;
   private gameContainer!: PIXI.Container;
   private worldContainer!: PIXI.Container;
-  private playerSprite!: PIXI.Graphics;
-  private tileSprites: Map<string, PIXI.Graphics> = new Map();
+  private playerSprite!: PIXI.Container;
+  private tileSprites: Map<string, PIXI.Container> = new Map();
   private subscriptions: Subscription[] = [];
   private currentTool: ToolType = 'hoe';
   
@@ -51,7 +56,8 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     private timeService: TimeService,
     private worldService: WorldService,
     private inventoryService: InventoryService,
-    private cropService: CropService
+    private cropService: CropService,
+    private emojiRenderer: EmojiRendererService
   ) {}
 
   ngOnInit(): void {
@@ -107,7 +113,7 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private createTileSprite(x: number, y: number, type: string): void {
     const key = `${x},${y}`;
-    const tile = new PIXI.Graphics();
+    const tile = new PIXI.Container();
     tile.x = x * this.TILE_SIZE;
     tile.y = y * this.TILE_SIZE;
     
@@ -117,31 +123,10 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     this.worldContainer.addChild(tile);
   }
 
-  private updateTileGraphics(tile: PIXI.Graphics, type: string, isWatered: boolean): void {
-    tile.clear();
-    tile.rect(0, 0, this.TILE_SIZE, this.TILE_SIZE);
-    
-    switch(type) {
-      case 'grass':
-        tile.fill(0x4CAF50);
-        break;
-      case 'dirt':
-        tile.fill(0x8B7355);
-        break;
-      case 'tilled_soil':
-        tile.fill(isWatered ? 0x4A3C28 : 0x6B5D54);
-        break;
-      case 'stone':
-        tile.fill(0x808080);
-        break;
-      case 'water':
-        tile.fill(0x4A90E2);
-        break;
-      default:
-        tile.fill(0x4CAF50);
-    }
-    
-    tile.stroke({ width: 1, color: 0x2E7D32 });
+  private updateTileGraphics(tile: PIXI.Container, type: string, isWatered: boolean): void {
+    const emoji = this.emojiRenderer.getTileEmoji(type, isWatered);
+    const bgColor = this.emojiRenderer.getTileBackgroundColor(type, isWatered);
+    this.emojiRenderer.updateTileEmoji(tile, emoji, bgColor);
   }
 
   private subscribeToWorldChanges(): void {
@@ -154,14 +139,14 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
           tile.removeChildren();
           
           if (tileState.crop) {
-            const cropSprite = new PIXI.Graphics();
-            const cropSize = 16;
-            const offset = (this.TILE_SIZE - cropSize) / 2;
-            
-            cropSprite.x = offset;
-            cropSprite.y = offset;
-            
-            this.drawCrop(cropSprite, tileState.crop.itemId, tileState.crop.growthStage, tileState.crop.maxGrowthStage);
+            const cropEmoji = this.emojiRenderer.getCropEmoji(
+              tileState.crop.itemId, 
+              tileState.crop.growthStage, 
+              tileState.crop.maxGrowthStage
+            );
+            const cropSprite = this.emojiRenderer.createEmojiSprite(cropEmoji, 20);
+            cropSprite.x = this.TILE_SIZE / 2;
+            cropSprite.y = this.TILE_SIZE / 2;
             tile.addChild(cropSprite);
           }
         }
@@ -170,46 +155,28 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscriptions.push(worldSub);
   }
 
-  private drawCrop(sprite: PIXI.Graphics, cropId: string, stage: number, maxStage: number): void {
-    sprite.clear();
-    
-    const progress = stage / maxStage;
-    const size = 8 + progress * 8;
-    
-    if (stage === 0) {
-      sprite.circle(8, 8, 2);
-      sprite.fill(0x7CB342);
-    } else if (stage < maxStage) {
-      sprite.rect(8 - size/2, 16 - size, size, size);
-      sprite.fill(0x7CB342);
-    } else {
-      const cropColors: Record<string, number> = {
-        'turnip_seed': 0xE91E63,
-        'potato_seed': 0x8D6E63,
-        'carrot_seed': 0xFF6F00,
-        'wheat_seed': 0xFFD54F
-      };
-      sprite.rect(0, 0, 16, 16);
-      sprite.fill(cropColors[cropId] || 0x4CAF50);
-    }
-  }
 
   private createPlayer(): void {
-    const playerGraphics = new PIXI.Graphics();
-    playerGraphics.rect(0, 0, this.TILE_SIZE - 4, this.TILE_SIZE - 4);
-    playerGraphics.fill(0xFF6B6B);
-    playerGraphics.stroke({ width: 2, color: 0xC44569 });
-    playerGraphics.x = 10 * this.TILE_SIZE + 2;
-    playerGraphics.y = 10 * this.TILE_SIZE + 2;
-    this.playerSprite = playerGraphics;
+    const playerContainer = new PIXI.Container();
+    
+    const playerEmoji = this.emojiRenderer.getPlayerEmoji();
+    const playerText = this.emojiRenderer.createEmojiSprite(playerEmoji, 28);
+    playerText.x = this.TILE_SIZE / 2;
+    playerText.y = this.TILE_SIZE / 2;
+    
+    playerContainer.addChild(playerText);
+    playerContainer.x = 10 * this.TILE_SIZE;
+    playerContainer.y = 10 * this.TILE_SIZE;
+    
+    this.playerSprite = playerContainer;
     this.gameContainer.addChild(this.playerSprite);
   }
 
   private setupEventListeners(): void {
     const gameStateSub = this.gameDataService.getGameState().subscribe(state => {
       if (this.playerSprite && state.playerState) {
-        this.playerSprite.x = state.playerState.position.x * this.TILE_SIZE + 2;
-        this.playerSprite.y = state.playerState.position.y * this.TILE_SIZE + 2;
+        this.playerSprite.x = state.playerState.position.x * this.TILE_SIZE;
+        this.playerSprite.y = state.playerState.position.y * this.TILE_SIZE;
       }
       this.currentTool = state.toolState.currentTool;
     });
@@ -221,6 +188,7 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     
     this.app.stage.eventMode = 'static';
     this.app.stage.on('pointerdown', this.handleClick.bind(this));
+    this.app.stage.on('rightdown', this.handleRightClick.bind(this));
   }
 
   private handleKeyDown(event: KeyboardEvent): void {
@@ -272,7 +240,89 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     const distance = Math.abs(x - playerState.position.x) + Math.abs(y - playerState.position.y);
     
     if (distance <= 1) {
+      this.smartAction(x, y);
+    } else {
+      this.movePlayerTo(x, y);
+    }
+  }
+
+  private smartAction(x: number, y: number): void {
+    const tile = this.worldService.getTile(x, y);
+    if (!tile) return;
+    
+    if (tile.crop && tile.crop.growthStage >= tile.crop.maxGrowthStage) {
+      this.plantOrHarvest();
+    } else if (tile.crop && !tile.isWatered) {
+      this.currentTool = 'watering_can';
       this.useTool(x, y);
+    } else if (tile.type === 'grass') {
+      this.currentTool = 'hoe';
+      this.useTool(x, y);
+    } else if (tile.type === 'tilled_soil' && !tile.crop) {
+      this.plantOrHarvest();
+    } else if (tile.type === 'tilled_soil' && !tile.isWatered) {
+      this.currentTool = 'watering_can';
+      this.useTool(x, y);
+    } else if (tile.type === 'stone') {
+      this.currentTool = 'pickaxe';
+      this.useTool(x, y);
+    }
+  }
+
+  private movePlayerTo(targetX: number, targetY: number): void {
+    if (targetX < 0 || targetX >= this.WORLD_WIDTH || targetY < 0 || targetY >= this.WORLD_HEIGHT) {
+      return;
+    }
+    
+    const playerState = this.gameDataService['gameState'].playerState;
+    const startX = playerState.position.x;
+    const startY = playerState.position.y;
+    
+    const path = this.findPath(startX, startY, targetX, targetY);
+    
+    if (path.length > 0) {
+      this.animateMovement(path);
+    }
+  }
+
+  private findPath(startX: number, startY: number, targetX: number, targetY: number): {x: number, y: number}[] {
+    const path: {x: number, y: number}[] = [];
+    
+    let currentX = startX;
+    let currentY = startY;
+    
+    while (currentX !== targetX || currentY !== targetY) {
+      if (currentX < targetX) currentX++;
+      else if (currentX > targetX) currentX--;
+      
+      if (currentY < targetY) currentY++;
+      else if (currentY > targetY) currentY--;
+      
+      path.push({x: currentX, y: currentY});
+    }
+    
+    return path;
+  }
+
+  private animateMovement(path: {x: number, y: number}[]): void {
+    if (path.length === 0) return;
+    
+    const step = path.shift();
+    if (step) {
+      this.gameDataService.updatePlayerState({
+        position: { x: step.x, y: step.y },
+        movementState: 'walking'
+      });
+      
+      setTimeout(() => {
+        if (path.length > 0) {
+          this.animateMovement(path);
+        } else {
+          this.gameDataService.updatePlayerState({
+            movementState: 'idle'
+          });
+        }
+      }, 150);
     }
   }
 
@@ -363,5 +413,103 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     this.app.ticker.add(() => {
       // Game update logic will go here
     });
+  }
+
+  private handleRightClick(event: PIXI.FederatedPointerEvent): void {
+    event.preventDefault();
+    
+    const x = Math.floor(event.global.x / this.TILE_SIZE);
+    const y = Math.floor(event.global.y / this.TILE_SIZE);
+    const tile = this.worldService.getTile(x, y);
+    
+    if (!tile) return;
+    
+    const actions = this.getContextMenuActions(tile.type, tile.crop !== undefined);
+    
+    const rect = this.gameCanvas.nativeElement.getBoundingClientRect();
+    const menuX = event.client.x;
+    const menuY = event.client.y;
+    
+    this.contextMenu.show(menuX, menuY, actions);
+  }
+
+  private getContextMenuActions(tileType: string, hasCrop: boolean): MenuAction[] {
+    const actions: MenuAction[] = [];
+    
+    switch(tileType) {
+      case 'grass':
+        actions.push(
+          { id: 'till', label: '耕地', icon: '🌾', enabled: true },
+          { id: 'chop', label: '砍伐', icon: '🪓', enabled: true },
+          { id: 'stone', label: '放置石块', icon: '🪨', enabled: true }
+        );
+        break;
+      case 'dirt':
+        actions.push(
+          { id: 'till', label: '耕地', icon: '🌾', enabled: true },
+          { id: 'grass', label: '恢复草地', icon: '🌱', enabled: true }
+        );
+        break;
+      case 'tilled_soil':
+        if (hasCrop) {
+          actions.push(
+            { id: 'water', label: '浇水', icon: '💧', enabled: true },
+            { id: 'harvest', label: '收获', icon: '🌾', enabled: true }
+          );
+        } else {
+          actions.push(
+            { id: 'plant', label: '种植...', icon: '🌱', enabled: true },
+            { id: 'water', label: '浇水', icon: '💧', enabled: true },
+            { id: 'grass', label: '恢复草地', icon: '🌿', enabled: true }
+          );
+        }
+        break;
+      case 'stone':
+        actions.push(
+          { id: 'mine', label: '挖掘', icon: '⛏️', enabled: true },
+          { id: 'remove', label: '移除', icon: '❌', enabled: true }
+        );
+        break;
+    }
+    
+    return actions;
+  }
+
+  handleMenuAction(actionId: string): void {
+    const playerState = this.gameDataService['gameState'].playerState;
+    
+    switch(actionId) {
+      case 'till':
+        this.currentTool = 'hoe';
+        this.useTool();
+        break;
+      case 'water':
+        this.currentTool = 'watering_can';
+        this.useTool();
+        break;
+      case 'chop':
+        this.currentTool = 'axe';
+        this.useTool();
+        break;
+      case 'mine':
+        this.currentTool = 'pickaxe';
+        this.useTool();
+        break;
+      case 'stone':
+        this.currentTool = 'hammer';
+        this.useTool();
+        break;
+      case 'plant':
+        this.showSeedSelectionPanel();
+        break;
+      case 'harvest':
+        this.plantOrHarvest();
+        break;
+    }
+  }
+
+  private showSeedSelectionPanel(): void {
+    // Will be implemented with seed selection panel
+    this.plantOrHarvest();
   }
 }

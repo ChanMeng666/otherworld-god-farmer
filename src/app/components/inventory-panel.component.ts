@@ -40,7 +40,7 @@ import { Subscription } from 'rxjs';
     
     <div class="inventory-toggle" (click)="toggleInventory()">
       <span>🎒</span>
-      <span class="hotkey">Tab</span>
+      <span class="hotkey">背包</span>
     </div>
   `,
   styles: [`
@@ -230,13 +230,10 @@ export class InventoryPanelComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.push(inventorySub, selectedSub);
-
-    window.addEventListener('keydown', this.handleKeyPress.bind(this));
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
-    window.removeEventListener('keydown', this.handleKeyPress.bind(this));
   }
 
   toggleInventory(): void {
@@ -251,12 +248,6 @@ export class InventoryPanelComponent implements OnInit, OnDestroy {
     this.selectedItem = this.inventory[this.selectedSlot];
   }
 
-  private handleKeyPress(event: KeyboardEvent): void {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      this.toggleInventory();
-    }
-  }
 
   getItemIcon(itemId: string): string {
     const icons: Record<string, string> = {

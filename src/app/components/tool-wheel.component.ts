@@ -9,21 +9,23 @@ import { Subscription } from 'rxjs';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="tool-wheel-container">
-      <div class="tool-wheel">
+    <div class="tool-wheel-container" [class.collapsed]="isCollapsed">
+      <div class="tool-toggle" (click)="toggleToolbar()">
+        <span *ngIf="isCollapsed">🦾 工具栏 ▲</span>
+        <span *ngIf="!isCollapsed">🦾 收起 ▼</span>
+      </div>
+      <div class="tool-wheel" *ngIf="!isCollapsed">
         <div 
           *ngFor="let tool of tools; let i = index" 
           class="tool-slot"
           [class.active]="tool === currentTool"
           (click)="selectTool(tool)"
-          [style.transform]="getToolTransform(i)"
         >
           <div class="tool-icon">{{ getToolIcon(tool) }}</div>
           <div class="tool-name">{{ getToolName(tool) }}</div>
-          <div class="hotkey">{{ i + 1 }}</div>
         </div>
       </div>
-      <div class="current-tool-display">
+      <div class="current-tool-display" *ngIf="!isCollapsed">
         <div class="tool-icon-large">{{ getToolIcon(currentTool) }}</div>
         <div class="tool-name-large">{{ getToolName(currentTool) }}</div>
       </div>
@@ -39,6 +41,27 @@ import { Subscription } from 'rxjs';
       flex-direction: column;
       align-items: center;
       gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .tool-wheel-container.collapsed {
+      bottom: 10px;
+    }
+
+    .tool-toggle {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 8px 20px;
+      border-radius: 20px;
+      border: 2px solid rgba(76, 175, 80, 0.5);
+      cursor: pointer;
+      color: white;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .tool-toggle:hover {
+      background: rgba(0, 0, 0, 0.9);
+      transform: scale(1.05);
     }
 
     .tool-wheel {
@@ -87,16 +110,6 @@ import { Subscription } from 'rxjs';
       text-align: center;
     }
 
-    .hotkey {
-      position: absolute;
-      top: 2px;
-      right: 4px;
-      font-size: 10px;
-      color: rgba(255, 255, 255, 0.6);
-      background: rgba(0, 0, 0, 0.5);
-      padding: 2px 4px;
-      border-radius: 3px;
-    }
 
     .current-tool-display {
       background: rgba(0, 0, 0, 0.8);
@@ -122,6 +135,7 @@ import { Subscription } from 'rxjs';
 export class ToolWheelComponent implements OnInit, OnDestroy {
   tools: ToolType[] = ['hoe', 'axe', 'pickaxe', 'watering_can', 'hammer', 'fishing_rod'];
   currentTool: ToolType = 'hoe';
+  isCollapsed: boolean = true;
   private subscriptions: Subscription[] = [];
 
   constructor(private gameDataService: GameDataService) {}
@@ -131,29 +145,18 @@ export class ToolWheelComponent implements OnInit, OnDestroy {
       this.currentTool = state.toolState.currentTool;
     });
     this.subscriptions.push(gameStateSub);
-
-    window.addEventListener('keydown', this.handleKeyPress.bind(this));
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
-    window.removeEventListener('keydown', this.handleKeyPress.bind(this));
+  }
+
+  toggleToolbar(): void {
+    this.isCollapsed = !this.isCollapsed;
   }
 
   selectTool(tool: ToolType): void {
     this.gameDataService.updateToolState({ currentTool: tool });
-  }
-
-  handleKeyPress(event: KeyboardEvent): void {
-    const key = parseInt(event.key);
-    if (key >= 1 && key <= 6) {
-      const toolIndex = key - 1;
-      this.selectTool(this.tools[toolIndex]);
-    }
-  }
-
-  getToolTransform(index: number): string {
-    return '';
   }
 
   getToolIcon(tool: ToolType): string {
