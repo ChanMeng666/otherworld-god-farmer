@@ -6,6 +6,8 @@ import { WorldService } from '../services/world.service';
 import { InventoryService } from '../services/inventory.service';
 import { CropService } from '../services/crop.service';
 import { EmojiRendererService } from '../services/emoji-renderer.service';
+import { BuildingService } from '../services/building.service';
+import { NpcService } from '../services/npc.service';
 import { Subscription } from 'rxjs';
 import { ToolType } from '../models/player.model';
 import { WorldData } from '../models/world.model';
@@ -45,8 +47,12 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
   private app!: PIXI.Application;
   private gameContainer!: PIXI.Container;
   private worldContainer!: PIXI.Container;
+  private buildingContainer!: PIXI.Container;
+  private npcContainer!: PIXI.Container;
   private playerSprite!: PIXI.Container;
   private tileSprites: Map<string, PIXI.Container> = new Map();
+  private buildingSprites: Map<string, PIXI.Container> = new Map();
+  private npcSprites: Map<string, PIXI.Container> = new Map();
   private subscriptions: Subscription[] = [];
   private currentTool: ToolType = 'hoe';
   
@@ -60,7 +66,9 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     private worldService: WorldService,
     private inventoryService: InventoryService,
     private cropService: CropService,
-    private emojiRenderer: EmojiRendererService
+    private emojiRenderer: EmojiRendererService,
+    private buildingService: BuildingService,
+    private npcService: NpcService
   ) {}
 
   ngOnInit(): void {
@@ -99,8 +107,12 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.gameContainer = new PIXI.Container();
     this.worldContainer = new PIXI.Container();
+    this.buildingContainer = new PIXI.Container();
+    this.npcContainer = new PIXI.Container();
     this.app.stage.addChild(this.gameContainer);
     this.gameContainer.addChild(this.worldContainer);
+    this.gameContainer.addChild(this.buildingContainer);
+    this.gameContainer.addChild(this.npcContainer);
   }
 
   private createWorld(): void {
@@ -112,6 +124,8 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.createPlayer();
     this.subscribeToWorldChanges();
+    this.subscribeToBuildingChanges();
+    this.subscribeToNpcChanges();
   }
 
   private createTileSprite(x: number, y: number, type: string): void {
@@ -239,6 +253,12 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     const x = Math.floor(event.global.x / this.TILE_SIZE);
     const y = Math.floor(event.global.y / this.TILE_SIZE);
     
+    // Check for building placement mode
+    if ((window as any).buildingPlacementMode?.active) {
+      this.tryPlaceBuilding(x, y);
+      return;
+    }
+    
     const playerState = this.gameDataService['gameState'].playerState;
     const distance = Math.abs(x - playerState.position.x) + Math.abs(y - playerState.position.y);
     
@@ -249,7 +269,104 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private tryPlaceBuilding(x: number, y: number): void {
+    const mode = (window as any).buildingPlacementMode;
+    if (!mode) return;
+    
+    const success = this.buildingService.placeBuilding(mode.typeId, x, y);
+    if (success) {
+      (window as any).buildingPlacementMode = null;
+    } else {
+      console.log('无法在此处建造！');
+    }
+  }
+
+  private subscribeToBuildingChanges(): void {
+    const buildingSub = this.buildingService.getBuildings().subscribe(buildings => {
+      // Clear existing building sprites
+      this.buildingSprites.forEach(sprite => {
+        this.buildingContainer.removeChild(sprite);
+      });
+      this.buildingSprites.clear();
+      
+      // Create sprites for all buildings
+      buildings.forEach(building => {
+        const buildingType = this.buildingService.getBuildingType(building.typeId);
+        if (buildingType) {
+          const container = new PIXI.Container();
+          container.x = building.position.x * this.TILE_SIZE;
+          container.y = building.position.y * this.TILE_SIZE;
+          
+          // Create building visual
+          const buildingSprite = this.emojiRenderer.createEmojiSprite(
+            buildingType.emoji,
+            this.TILE_SIZE * Math.min(buildingType.size.width, buildingType.size.height)
+          );
+          buildingSprite.x = (buildingType.size.width * this.TILE_SIZE) / 2;
+          buildingSprite.y = (buildingType.size.height * this.TILE_SIZE) / 2;
+          
+          container.addChild(buildingSprite);
+          this.buildingContainer.addChild(container);
+          this.buildingSprites.set(building.id, container);
+        }
+      });
+    });
+    this.subscriptions.push(buildingSub);
+  }
+
+  private subscribeToNpcChanges(): void {
+    const npcSub = this.npcService.getNpcs().subscribe(npcs => {
+      // Clear existing NPC sprites
+      this.npcSprites.forEach(sprite => {
+        this.npcContainer.removeChild(sprite);
+      });
+      this.npcSprites.clear();
+      
+      // Create sprites for all NPCs
+      npcs.forEach(npc => {
+        const npcDef = this.npcService.getNpcDefinition(npc.id);
+        if (npcDef) {
+          const container = new PIXI.Container();
+          
+          // Create NPC visual
+          const npcSprite = this.emojiRenderer.createEmojiSprite(npcDef.emoji, 24);
+          npcSprite.x = this.TILE_SIZE / 2;
+          npcSprite.y = this.TILE_SIZE / 2;
+          
+          // Add name label
+          const nameStyle = new PIXI.TextStyle({
+            fontFamily: 'Arial',
+            fontSize: 10,
+            fill: 0xFFFFFF,
+            stroke: { color: 0x000000, width: 2 }
+          });
+          const nameText = new PIXI.Text({ text: npc.name, style: nameStyle });
+          nameText.anchor.set(0.5, 0);
+          nameText.x = this.TILE_SIZE / 2;
+          nameText.y = -5;
+          
+          container.addChild(npcSprite);
+          container.addChild(nameText);
+          container.x = npc.position.x * this.TILE_SIZE;
+          container.y = npc.position.y * this.TILE_SIZE;
+          
+          this.npcContainer.addChild(container);
+          this.npcSprites.set(npc.id, container);
+        }
+      });
+    });
+    this.subscriptions.push(npcSub);
+  }
+
   private smartAction(x: number, y: number): void {
+    // Check for NPC interaction first
+    const npc = this.npcService.getNpcAt(x, y);
+    if (npc) {
+      const dialogue = this.npcService.talkToNpc(npc.id);
+      console.log(`${npc.name}: ${dialogue}`);
+      return;
+    }
+    
     const tile = this.worldService.getTile(x, y);
     if (!tile) return;
     
@@ -268,6 +385,9 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       this.useTool(x, y);
     } else if (tile.type === 'stone') {
       this.currentTool = 'pickaxe';
+      this.useTool(x, y);
+    } else if (tile.type === 'tree') {
+      this.currentTool = 'axe';
       this.useTool(x, y);
     }
   }
@@ -351,10 +471,18 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
         success = this.worldService.waterTile(x, y);
         break;
       case 'axe':
-        success = this.worldService.chopTree(x, y);
+        const chopResult = this.worldService.chopTree(x, y);
+        success = chopResult.success;
+        if (chopResult.resource) {
+          this.addResourceToInventory(chopResult.resource);
+        }
         break;
       case 'pickaxe':
-        success = this.worldService.mineTile(x, y);
+        const mineResult = this.worldService.mineTile(x, y);
+        success = mineResult.success;
+        if (mineResult.resource) {
+          this.addResourceToInventory(mineResult.resource);
+        }
         break;
       case 'hammer':
         success = this.worldService.placeStoneTile(x, y);
@@ -375,6 +503,19 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
           movementState: 'idle'
         });
       }, 200);
+    }
+  }
+
+  private addResourceToInventory(resource: { type: string, amount: number }): void {
+    const resourceItems: Record<string, any> = {
+      'wood': { id: 'wood', name: '木材', description: '可用于建造', isStackable: true },
+      'stone': { id: 'stone', name: '石头', description: '可用于建造', isStackable: true }
+    };
+    
+    const item = resourceItems[resource.type];
+    if (item) {
+      this.inventoryService.addItem(item, resource.amount);
+      console.log(`获得了 ${resource.amount} 个${item.name}!`);
     }
   }
 
@@ -443,7 +584,6 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'grass':
         actions.push(
           { id: 'till', label: '耕地', icon: '🌾', enabled: true },
-          { id: 'chop', label: '砍伐', icon: '🪓', enabled: true },
           { id: 'stone', label: '放置石块', icon: '🪨', enabled: true }
         );
         break;
@@ -471,6 +611,11 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
         actions.push(
           { id: 'mine', label: '挖掘', icon: '⛏️', enabled: true },
           { id: 'remove', label: '移除', icon: '❌', enabled: true }
+        );
+        break;
+      case 'tree':
+        actions.push(
+          { id: 'chop', label: '砍伐', icon: '🪓', enabled: true }
         );
         break;
     }

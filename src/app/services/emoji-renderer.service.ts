@@ -13,7 +13,8 @@ export class EmojiRendererService {
       'dirt': '🟫',
       'tilled_soil': isWatered ? '🟤' : '🟫',
       'stone': '🪨',
-      'water': '💧'
+      'water': '💧',
+      'tree': '🌳'
     };
     return tileEmojis[tileType] || '🌱';
   }
@@ -127,7 +128,8 @@ export class EmojiRendererService {
       'dirt': 0x8B7355,
       'tilled_soil': isWatered ? 0x4A3C28 : 0x6B5D54,
       'stone': 0xA9A9A9,
-      'water': 0x87CEEB
+      'water': 0x87CEEB,
+      'tree': 0x228B22
     };
     return colors[tileType] || 0xF0F0F0;
   }

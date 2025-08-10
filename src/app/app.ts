@@ -4,10 +4,11 @@ import { PlayerHudComponent } from './components/player-hud.component';
 import { ToolWheelComponent } from './components/tool-wheel.component';
 import { InventoryPanelComponent } from './components/inventory-panel.component';
 import { HelpPanelComponent } from './components/help-panel.component';
+import { BuildingPanelComponent } from './components/building-panel.component';
 
 @Component({
   selector: 'app-root',
-  imports: [GameCanvasComponent, PlayerHudComponent, ToolWheelComponent, InventoryPanelComponent, HelpPanelComponent],
+  imports: [GameCanvasComponent, PlayerHudComponent, ToolWheelComponent, InventoryPanelComponent, HelpPanelComponent, BuildingPanelComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.scss'
 })

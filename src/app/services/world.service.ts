@@ -28,10 +28,30 @@ export class WorldService {
     for (let y = 0; y < this.WORLD_HEIGHT; y++) {
       for (let x = 0; x < this.WORLD_WIDTH; x++) {
         const key = `${x},${y}`;
+        
+        // Generate world with some variety
+        let tileType = 'grass';
+        const random = Math.random();
+        
+        // Add some trees (represented as special grass tiles with resources)
+        if (random < 0.1 && (x > 2 && x < this.WORLD_WIDTH - 3) && (y > 2 && y < this.WORLD_HEIGHT - 3)) {
+          tileType = 'tree';
+        } 
+        // Add some stones
+        else if (random < 0.15) {
+          tileType = 'stone';
+        }
+        // Add a small pond
+        else if ((x >= 5 && x <= 7) && (y >= 3 && y <= 5)) {
+          tileType = 'water';
+        }
+        
         this.worldData[key] = {
           position: { x, y },
-          type: 'grass',
-          isWatered: false
+          type: tileType,
+          isWatered: false,
+          resource: tileType === 'tree' ? { type: 'wood', amount: 3 } : 
+                   tileType === 'stone' ? { type: 'stone', amount: 2 } : undefined
         };
       }
     }
@@ -81,36 +101,40 @@ export class WorldService {
     return false;
   }
 
-  chopTree(x: number, y: number): boolean {
+  chopTree(x: number, y: number): { success: boolean, resource?: { type: string, amount: number } } {
     const key = `${x},${y}`;
     const tile = this.worldData[key];
     
-    if (!tile) return false;
+    if (!tile) return { success: false };
     
-    if (tile.type === 'grass') {
-      tile.type = 'dirt';
+    if (tile.type === 'tree' && tile.resource) {
+      const resource = { ...tile.resource };
+      tile.type = 'grass';
+      tile.resource = undefined;
       this.worldData$.next(this.worldData);
       this.gameDataService.updateWorldData(this.worldData);
-      return true;
+      return { success: true, resource };
     }
     
-    return false;
+    return { success: false };
   }
 
-  mineTile(x: number, y: number): boolean {
+  mineTile(x: number, y: number): { success: boolean, resource?: { type: string, amount: number } } {
     const key = `${x},${y}`;
     const tile = this.worldData[key];
     
-    if (!tile) return false;
+    if (!tile) return { success: false };
     
-    if (tile.type === 'stone') {
+    if (tile.type === 'stone' && tile.resource) {
+      const resource = { ...tile.resource };
       tile.type = 'dirt';
+      tile.resource = undefined;
       this.worldData$.next(this.worldData);
       this.gameDataService.updateWorldData(this.worldData);
-      return true;
+      return { success: true, resource };
     }
     
-    return false;
+    return { success: false };
   }
 
   placeStoneTile(x: number, y: number): boolean {
