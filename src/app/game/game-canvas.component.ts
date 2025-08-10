@@ -10,15 +10,17 @@ import { Subscription } from 'rxjs';
 import { ToolType } from '../models/player.model';
 import { WorldData } from '../models/world.model';
 import { ContextMenuComponent, MenuAction } from '../components/context-menu.component';
+import { SeedSelectorComponent } from '../components/seed-selector.component';
 
 @Component({
   selector: 'app-game-canvas',
   standalone: true,
-  imports: [ContextMenuComponent],
+  imports: [ContextMenuComponent, SeedSelectorComponent],
   template: `
     <div class="game-container">
       <canvas #gameCanvas></canvas>
       <app-context-menu #contextMenu (actionSelected)="handleMenuAction($event)"></app-context-menu>
+      <app-seed-selector #seedSelector (seedSelected)="onSeedSelected($event)"></app-seed-selector>
     </div>
   `,
   styles: [`
@@ -38,6 +40,7 @@ import { ContextMenuComponent, MenuAction } from '../components/context-menu.com
 export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('gameCanvas', { static: false }) gameCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('contextMenu', { static: false }) contextMenu!: ContextMenuComponent;
+  @ViewChild('seedSelector', { static: false }) seedSelector!: SeedSelectorComponent;
   
   private app!: PIXI.Application;
   private gameContainer!: PIXI.Container;
@@ -509,7 +512,25 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private showSeedSelectionPanel(): void {
-    // Will be implemented with seed selection panel
-    this.plantOrHarvest();
+    const playerState = this.gameDataService['gameState'].playerState;
+    this.seedSelector.show(playerState.position.x, playerState.position.y);
+  }
+
+  onSeedSelected(slotIndex: number): void {
+    const playerState = this.gameDataService['gameState'].playerState;
+    const x = playerState.position.x;
+    const y = playerState.position.y;
+    const tile = this.worldService.getTile(x, y);
+    
+    if (tile && tile.type === 'tilled_soil' && !tile.crop) {
+      const selectedItem = this.inventoryService['inventory'][slotIndex];
+      if (selectedItem && selectedItem.item && selectedItem.item.id.endsWith('_seed')) {
+        const success = this.cropService.plantSeed(x, y, selectedItem.item.id);
+        if (success) {
+          this.inventoryService.removeItem(slotIndex, 1);
+          console.log(`种植了 ${selectedItem.item.name}!`);
+        }
+      }
+    }
   }
 }
