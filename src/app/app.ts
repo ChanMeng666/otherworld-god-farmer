@@ -7,10 +7,12 @@ import { HelpPanelComponent } from './components/help-panel.component';
 import { BuildingPanelComponent } from './components/building-panel.component';
 import { SaveMenuComponent } from './components/save-menu.component';
 import { AudioControlsComponent } from './components/audio-controls.component';
+import { PerformanceMonitorComponent } from './components/performance-monitor.component';
+import { EventNotificationComponent } from './components/event-notification.component';
 
 @Component({
   selector: 'app-root',
-  imports: [GameCanvasComponent, PlayerHudComponent, ToolWheelComponent, InventoryPanelComponent, HelpPanelComponent, BuildingPanelComponent, SaveMenuComponent, AudioControlsComponent],
+  imports: [GameCanvasComponent, PlayerHudComponent, ToolWheelComponent, InventoryPanelComponent, HelpPanelComponent, BuildingPanelComponent, SaveMenuComponent, AudioControlsComponent, PerformanceMonitorComponent, EventNotificationComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.scss'
 })

@@ -8,6 +8,7 @@ import { CropService } from '../services/crop.service';
 import { EmojiRendererService } from '../services/emoji-renderer.service';
 import { BuildingService } from '../services/building.service';
 import { NpcService } from '../services/npc.service';
+import { PerformanceService } from '../services/performance.service';
 import { Subscription } from 'rxjs';
 import { ToolType } from '../models/player.model';
 import { WorldData } from '../models/world.model';
@@ -68,7 +69,8 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     private cropService: CropService,
     private emojiRenderer: EmojiRendererService,
     private buildingService: BuildingService,
-    private npcService: NpcService
+    private npcService: NpcService,
+    private performanceService: PerformanceService
   ) {}
 
   ngOnInit(): void {
@@ -105,14 +107,28 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       autoDensity: true
     });
 
+    // Initialize performance optimization
+    this.performanceService.initializeContainers(this.app);
+    const containers = this.performanceService.getContainers();
+    
+    // Use optimized containers if available
     this.gameContainer = new PIXI.Container();
-    this.worldContainer = new PIXI.Container();
+    this.worldContainer = containers.tiles || new PIXI.Container();
     this.buildingContainer = new PIXI.Container();
-    this.npcContainer = new PIXI.Container();
-    this.app.stage.addChild(this.gameContainer);
-    this.gameContainer.addChild(this.worldContainer);
-    this.gameContainer.addChild(this.buildingContainer);
-    this.gameContainer.addChild(this.npcContainer);
+    this.npcContainer = containers.entities || new PIXI.Container();
+    
+    // Enable performance optimizations
+    this.performanceService.enableBatchRendering();
+    this.worldContainer.cullable = true;
+    this.npcContainer.cullable = true;
+    
+    // Add containers to stage
+    if (!containers.tiles) {
+      this.app.stage.addChild(this.gameContainer);
+      this.gameContainer.addChild(this.worldContainer);
+      this.gameContainer.addChild(this.buildingContainer);
+      this.gameContainer.addChild(this.npcContainer);
+    }
   }
 
   private createWorld(): void {
@@ -555,7 +571,18 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private startGameLoop(): void {
     this.app.ticker.add(() => {
-      // Game update logic will go here
+      // Update performance monitoring
+      this.performanceService.updateFPS();
+      
+      // Update culling based on camera position
+      const cameraX = this.gameContainer.x;
+      const cameraY = this.gameContainer.y;
+      this.performanceService.updateCulling(
+        -cameraX,
+        -cameraY,
+        this.app.screen.width,
+        this.app.screen.height
+      );
     });
   }
 

@@ -67,6 +67,60 @@ export class CropService {
         growthStages: 6,
         daysPerStage: 1,
         seasons: ['Summer', 'Autumn']
+      },
+      {
+        id: 'tomato',
+        name: '番茄',
+        seedItemId: 'tomato_seed',
+        produceItemId: 'tomato',
+        growthStages: 5,
+        daysPerStage: 2,
+        seasons: ['Summer']
+      },
+      {
+        id: 'corn',
+        name: '玉米',
+        seedItemId: 'corn_seed',
+        produceItemId: 'corn',
+        growthStages: 7,
+        daysPerStage: 2,
+        seasons: ['Summer', 'Autumn']
+      },
+      {
+        id: 'pumpkin',
+        name: '南瓜',
+        seedItemId: 'pumpkin_seed',
+        produceItemId: 'pumpkin',
+        growthStages: 8,
+        daysPerStage: 3,
+        seasons: ['Autumn']
+      },
+      {
+        id: 'strawberry',
+        name: '草莓',
+        seedItemId: 'strawberry_seed',
+        produceItemId: 'strawberry',
+        growthStages: 4,
+        daysPerStage: 1,
+        seasons: ['Spring', 'Summer']
+      },
+      {
+        id: 'cabbage',
+        name: '卷心菜',
+        seedItemId: 'cabbage_seed',
+        produceItemId: 'cabbage',
+        growthStages: 6,
+        daysPerStage: 2,
+        seasons: ['Spring', 'Autumn', 'Winter']
+      },
+      {
+        id: 'rice',
+        name: '稻米',
+        seedItemId: 'rice_seed',
+        produceItemId: 'rice',
+        growthStages: 7,
+        daysPerStage: 3,
+        seasons: ['Spring', 'Summer']
       }
     ];
 
