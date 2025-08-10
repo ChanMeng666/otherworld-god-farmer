@@ -30,7 +30,7 @@ export class WorldService {
         const key = `${x},${y}`;
         
         // Generate world with some variety
-        let tileType = 'grass';
+        let tileType: 'dirt' | 'grass' | 'water' | 'stone' | 'tilled_soil' | 'tree' = 'grass';
         const random = Math.random();
         
         // Add some trees (represented as special grass tiles with resources)

@@ -95,10 +95,10 @@ export class BuildingService {
     const woodSlot = inventory.find(s => s.item?.id === 'wood');
     const stoneSlot = inventory.find(s => s.item?.id === 'stone');
 
-    const hasWood = !type.cost.wood || (woodSlot && woodSlot.quantity >= type.cost.wood);
-    const hasStone = !type.cost.stone || (stoneSlot && stoneSlot.quantity >= type.cost.stone);
+    const hasWood = !type.cost.wood || (woodSlot !== undefined && woodSlot.quantity >= type.cost.wood);
+    const hasStone = !type.cost.stone || (stoneSlot !== undefined && stoneSlot.quantity >= type.cost.stone);
 
-    return hasWood && hasStone;
+    return !!(hasWood && hasStone);
   }
 
   canPlaceBuilding(typeId: string, x: number, y: number): boolean {
