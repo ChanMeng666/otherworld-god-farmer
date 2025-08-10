@@ -31,7 +31,7 @@ import { Subscription } from 'rxjs';
           <div class="slot-number">{{ i + 1 }}</div>
         </div>
       </div>
-      <div class="item-info" *ngIf="selectedItem?.item">
+      <div class="item-info" *ngIf="selectedItem && selectedItem.item">
         <h4>{{ selectedItem.item.name }}</h4>
         <p>{{ selectedItem.item.description }}</p>
         <p class="quantity">数量: {{ selectedItem.quantity }}</p>
