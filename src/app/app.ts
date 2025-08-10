@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { GameCanvasComponent } from './game/game-canvas.component';
 import { PlayerHudComponent } from './components/player-hud.component';
+import { ToolWheelComponent } from './components/tool-wheel.component';
+import { InventoryPanelComponent } from './components/inventory-panel.component';
 
 @Component({
   selector: 'app-root',
-  imports: [GameCanvasComponent, PlayerHudComponent],
+  imports: [GameCanvasComponent, PlayerHudComponent, ToolWheelComponent, InventoryPanelComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.scss'
 })
