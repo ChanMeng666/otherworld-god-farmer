@@ -5,10 +5,12 @@ import { ToolWheelComponent } from './components/tool-wheel.component';
 import { InventoryPanelComponent } from './components/inventory-panel.component';
 import { HelpPanelComponent } from './components/help-panel.component';
 import { BuildingPanelComponent } from './components/building-panel.component';
+import { SaveMenuComponent } from './components/save-menu.component';
+import { AudioControlsComponent } from './components/audio-controls.component';
 
 @Component({
   selector: 'app-root',
-  imports: [GameCanvasComponent, PlayerHudComponent, ToolWheelComponent, InventoryPanelComponent, HelpPanelComponent, BuildingPanelComponent],
+  imports: [GameCanvasComponent, PlayerHudComponent, ToolWheelComponent, InventoryPanelComponent, HelpPanelComponent, BuildingPanelComponent, SaveMenuComponent, AudioControlsComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.scss'
 })

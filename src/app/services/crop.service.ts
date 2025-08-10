@@ -3,6 +3,7 @@ import { WorldService } from './world.service';
 import { TimeService } from './time.service';
 import { ICropState } from '../models/crop.model';
 import { IItem } from '../models/inventory.model';
+import { AudioService } from './audio.service';
 
 export interface CropDefinition {
   id: string;
@@ -22,7 +23,8 @@ export class CropService {
 
   constructor(
     private worldService: WorldService,
-    private timeService: TimeService
+    private timeService: TimeService,
+    private audioService: AudioService
   ) {
     this.initializeCropDefinitions();
     this.subscribeToTimeChanges();
@@ -100,6 +102,7 @@ export class CropService {
     tile.crop = cropState;
     this.worldService['worldData$'].next(this.worldService['worldData']);
     this.worldService['gameDataService'].updateWorldData(this.worldService['worldData']);
+    this.audioService.playSound('plant');
     
     return true;
   }
@@ -131,6 +134,7 @@ export class CropService {
     tile.type = 'dirt';
     this.worldService['worldData$'].next(this.worldService['worldData']);
     this.worldService['gameDataService'].updateWorldData(this.worldService['worldData']);
+    this.audioService.playSound('harvest');
 
     return harvestedItem;
   }

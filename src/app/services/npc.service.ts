@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable, interval } from 'rxjs';
 import { INpcState } from '../models/npc.model';
 import { GameDataService } from './game-data.service';
 import { TimeService } from './time.service';
+import { AudioService } from './audio.service';
 
 export interface NpcDefinition {
   id: string;
@@ -28,7 +29,8 @@ export class NpcService {
 
   constructor(
     private gameDataService: GameDataService,
-    private timeService: TimeService
+    private timeService: TimeService,
+    private audioService: AudioService
   ) {
     this.initializeNpcDefinitions();
     this.initializeNpcs();
@@ -237,6 +239,8 @@ export class NpcService {
     const definition = this.npcDefinitions.get(npcId);
     
     if (!npc || !definition) return '...';
+    
+    this.audioService.playSound('talk');
 
     // Get random dialogue based on relationship level
     let dialogues: string[];

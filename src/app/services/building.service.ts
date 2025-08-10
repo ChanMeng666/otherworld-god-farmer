@@ -4,6 +4,7 @@ import { IBuilding } from '../models/building.model';
 import { GameDataService } from './game-data.service';
 import { WorldService } from './world.service';
 import { InventoryService } from './inventory.service';
+import { AudioService } from './audio.service';
 
 export interface BuildingType {
   id: string;
@@ -26,7 +27,8 @@ export class BuildingService {
   constructor(
     private gameDataService: GameDataService,
     private worldService: WorldService,
-    private inventoryService: InventoryService
+    private inventoryService: InventoryService,
+    private audioService: AudioService
   ) {
     this.initializeBuildingTypes();
     
@@ -165,6 +167,7 @@ export class BuildingService {
     this.gameDataService['gameState'].buildings = this.buildings;
     this.worldService['worldData$'].next(worldData);
     this.gameDataService.updateWorldData(worldData);
+    this.audioService.playSound('build');
 
     console.log(`建造了 ${type.name}!`);
     return true;

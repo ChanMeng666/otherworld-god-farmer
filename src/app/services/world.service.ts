@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ITileState, WorldData } from '../models/world.model';
 import { GameDataService } from './game-data.service';
+import { AudioService } from './audio.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class WorldService {
   private readonly WORLD_WIDTH = 30;
   private readonly WORLD_HEIGHT = 20;
 
-  constructor(private gameDataService: GameDataService) {
+  constructor(private gameDataService: GameDataService, private audioService: AudioService) {
     this.initializeWorld();
     
     this.gameDataService.getGameState().subscribe(state => {
@@ -79,6 +80,7 @@ export class WorldService {
       tile.isWatered = false;
       this.worldData$.next(this.worldData);
       this.gameDataService.updateWorldData(this.worldData);
+      this.audioService.playSound('till');
       return true;
     }
     
@@ -95,6 +97,7 @@ export class WorldService {
       tile.isWatered = true;
       this.worldData$.next(this.worldData);
       this.gameDataService.updateWorldData(this.worldData);
+      this.audioService.playSound('water');
       return true;
     }
     
@@ -113,6 +116,7 @@ export class WorldService {
       tile.resource = undefined;
       this.worldData$.next(this.worldData);
       this.gameDataService.updateWorldData(this.worldData);
+      this.audioService.playSound('chop');
       return { success: true, resource };
     }
     
@@ -131,6 +135,7 @@ export class WorldService {
       tile.resource = undefined;
       this.worldData$.next(this.worldData);
       this.gameDataService.updateWorldData(this.worldData);
+      this.audioService.playSound('mine');
       return { success: true, resource };
     }
     

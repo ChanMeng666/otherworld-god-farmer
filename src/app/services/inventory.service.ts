@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { IItem, IInventorySlot } from '../models/inventory.model';
 import { GameDataService } from './game-data.service';
+import { AudioService } from './audio.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class InventoryService {
   private selectedSlot = 0;
   private selectedSlot$ = new BehaviorSubject<number>(this.selectedSlot);
 
-  constructor(private gameDataService: GameDataService) {
+  constructor(private gameDataService: GameDataService, private audioService: AudioService) {
     this.initializeInventory();
     
     this.gameDataService.getGameState().subscribe(state => {
@@ -94,6 +95,7 @@ export class InventoryService {
       if (existingSlot) {
         existingSlot.quantity = Math.min(99, existingSlot.quantity + quantity);
         this.updateInventory();
+        this.audioService.playSound('pickup');
         return true;
       }
     }
@@ -103,6 +105,7 @@ export class InventoryService {
       emptySlot.item = item;
       emptySlot.quantity = quantity;
       this.updateInventory();
+      this.audioService.playSound('pickup');
       return true;
     }
 
