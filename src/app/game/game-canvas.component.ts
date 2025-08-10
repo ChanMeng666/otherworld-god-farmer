@@ -111,24 +111,22 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     this.performanceService.initializeContainers(this.app);
     const containers = this.performanceService.getContainers();
     
-    // Use optimized containers if available
+    // Create main game container
     this.gameContainer = new PIXI.Container();
-    this.worldContainer = containers.tiles || new PIXI.Container();
+    this.worldContainer = new PIXI.Container();
     this.buildingContainer = new PIXI.Container();
-    this.npcContainer = containers.entities || new PIXI.Container();
+    this.npcContainer = new PIXI.Container();
     
     // Enable performance optimizations
     this.performanceService.enableBatchRendering();
     this.worldContainer.cullable = true;
     this.npcContainer.cullable = true;
     
-    // Add containers to stage
-    if (!containers.tiles) {
-      this.app.stage.addChild(this.gameContainer);
-      this.gameContainer.addChild(this.worldContainer);
-      this.gameContainer.addChild(this.buildingContainer);
-      this.gameContainer.addChild(this.npcContainer);
-    }
+    // Add containers to stage in proper order
+    this.app.stage.addChild(this.gameContainer);
+    this.gameContainer.addChild(this.worldContainer);
+    this.gameContainer.addChild(this.buildingContainer);
+    this.gameContainer.addChild(this.npcContainer);
   }
 
   private createWorld(): void {
@@ -190,7 +188,19 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   private createPlayer(): void {
+    // Remove any existing player sprite
+    if (this.playerSprite && this.playerSprite.parent) {
+      this.playerSprite.parent.removeChild(this.playerSprite);
+    }
+    
     const playerContainer = new PIXI.Container();
+    
+    // Create background circle for better visibility
+    const bg = new PIXI.Graphics();
+    bg.circle(this.TILE_SIZE / 2, this.TILE_SIZE / 2, 18);
+    bg.fill(0xFFFFFF, 0.8);
+    bg.stroke({ width: 2, color: 0x4CAF50 });
+    playerContainer.addChild(bg);
     
     const playerEmoji = this.emojiRenderer.getPlayerEmoji();
     const playerText = this.emojiRenderer.createEmojiSprite(playerEmoji, 28);
@@ -200,9 +210,15 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     playerContainer.addChild(playerText);
     playerContainer.x = 10 * this.TILE_SIZE;
     playerContainer.y = 10 * this.TILE_SIZE;
+    playerContainer.zIndex = 1000; // Ensure player is above other sprites
+    playerContainer.visible = true;
     
     this.playerSprite = playerContainer;
-    this.gameContainer.addChild(this.playerSprite);
+    // Add player to npc container so it appears above world tiles
+    this.npcContainer.addChild(this.playerSprite);
+    this.npcContainer.sortableChildren = true; // Enable z-index sorting
+    
+    console.log('Player created at position:', playerContainer.x, playerContainer.y);
   }
 
   private setupEventListeners(): void {
@@ -210,6 +226,11 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.playerSprite && state.playerState) {
         this.playerSprite.x = state.playerState.position.x * this.TILE_SIZE;
         this.playerSprite.y = state.playerState.position.y * this.TILE_SIZE;
+        this.playerSprite.visible = true; // Ensure player remains visible
+        // Bring player to front if needed
+        if (this.playerSprite.parent) {
+          this.playerSprite.parent.setChildIndex(this.playerSprite, this.playerSprite.parent.children.length - 1);
+        }
       }
       this.currentTool = state.toolState.currentTool;
     });
