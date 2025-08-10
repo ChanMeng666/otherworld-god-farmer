@@ -66,7 +66,11 @@ export class PerformanceService {
     container.children.forEach(child => {
       if ('getBounds' in child) {
         const bounds = child.getBounds();
-        child.visible = this.cullBounds!.intersects(bounds);
+        // Check if child is within visible bounds
+        child.visible = this.cullBounds!.x < bounds.x + bounds.width &&
+                       this.cullBounds!.x + this.cullBounds!.width > bounds.x &&
+                       this.cullBounds!.y < bounds.y + bounds.height &&
+                       this.cullBounds!.y + this.cullBounds!.height > bounds.y;
       }
     });
   }
@@ -94,11 +98,13 @@ export class PerformanceService {
   enableBatchRendering(): void {
     if (!this.app) return;
     
-    // Enable advanced blend modes
-    this.app.renderer.state.blendModes[PIXI.BLEND_MODES.NORMAL] = [
-      WebGLRenderingContext.ONE,
-      WebGLRenderingContext.ONE_MINUS_SRC_ALPHA
-    ];
+    // Enable batch rendering by setting container properties
+    if (this.tileContainer) {
+      this.tileContainer.sortableChildren = false;
+    }
+    if (this.entityContainer) {
+      this.entityContainer.sortableChildren = false;
+    }
   }
 
   // FPS monitoring
