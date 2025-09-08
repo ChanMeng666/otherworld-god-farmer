@@ -9,10 +9,11 @@ import { SaveMenuComponent } from './components/save-menu.component';
 import { AudioControlsComponent } from './components/audio-controls.component';
 import { PerformanceMonitorComponent } from './components/performance-monitor.component';
 import { EventNotificationComponent } from './components/event-notification.component';
+import { DeveloperInfoComponent } from './components/developer-info.component';
 
 @Component({
   selector: 'app-root',
-  imports: [GameCanvasComponent, PlayerHudComponent, ToolWheelComponent, InventoryPanelComponent, HelpPanelComponent, BuildingPanelComponent, SaveMenuComponent, AudioControlsComponent, PerformanceMonitorComponent, EventNotificationComponent],
+  imports: [GameCanvasComponent, PlayerHudComponent, ToolWheelComponent, InventoryPanelComponent, HelpPanelComponent, BuildingPanelComponent, SaveMenuComponent, AudioControlsComponent, PerformanceMonitorComponent, EventNotificationComponent, DeveloperInfoComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.scss'
 })

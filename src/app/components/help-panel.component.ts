@@ -9,13 +9,13 @@ import { CommonModule } from '@angular/common';
     <div class="help-toggle" (click)="toggleHelp()">
       <span>❓</span>
     </div>
-    
+
     <div class="help-panel" *ngIf="isVisible">
       <div class="help-header">
         <h3>🎮 游戏操作指南</h3>
         <button class="close-btn" (click)="toggleHelp()">✕</button>
       </div>
-      
+
       <div class="help-content">
         <div class="help-section">
           <h4>🖱️ 鼠标操作</h4>
@@ -32,7 +32,7 @@ import { CommonModule } from '@angular/common';
             <li><strong>右键点击</strong>：显示操作菜单</li>
           </ul>
         </div>
-        
+
         <div class="help-section">
           <h4>⌨️ 键盘操作</h4>
           <ul>
@@ -41,7 +41,7 @@ import { CommonModule } from '@angular/common';
             <li><strong>E键</strong>：种植/收获</li>
           </ul>
         </div>
-        
+
         <div class="help-section">
           <h4>🌾 种植流程</h4>
           <ol>
@@ -52,7 +52,7 @@ import { CommonModule } from '@angular/common';
             <li>作物成熟后点击收获</li>
           </ol>
         </div>
-        
+
         <div class="help-section">
           <h4>🎒 界面说明</h4>
           <ul>
@@ -61,9 +61,35 @@ import { CommonModule } from '@angular/common';
             <li><strong>右上角</strong>：时间、季节、体力显示</li>
           </ul>
         </div>
-        
+
         <div class="help-section tip">
           💡 <strong>提示</strong>：作物需要浇水才能生长，每天早晨检查你的农田！
+        </div>
+
+        <div class="help-section developer-section">
+          <div class="dev-header">
+            <img src="/chan_logo.svg" alt="Chan Meng Logo" class="dev-logo-small">
+            <div class="dev-info">
+              <h4>👨‍💻 开发者：Chan Meng</h4>
+              <p class="dev-subtitle">专业全栈开发 | 游戏开发专家</p>
+            </div>
+          </div>
+
+          <div class="dev-contact">
+            <p class="dev-description">需要网站定制开发？专业提供现代化Web应用、游戏开发、企业网站定制服务</p>
+
+            <div class="dev-links">
+              <a href="mailto:chanmeng.dev@gmail.com" class="dev-link email">
+                📧 chanmeng.dev@gmail.com
+              </a>
+              <a href="https://github.com/ChanMeng666" target="_blank" class="dev-link github">
+                🔗 GitHub作品集
+              </a>
+              <a href="https://github.com/ChanMeng666/otherworld-god-farmer" target="_blank" class="dev-link project">
+                📂 本项目源码
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -192,6 +218,94 @@ import { CommonModule } from '@angular/common';
 
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(76, 175, 80, 0.7);
+    }
+
+    /* Developer section styles */
+    .developer-section {
+      background: rgba(76, 175, 80, 0.05);
+      border: 1px solid rgba(76, 175, 80, 0.2);
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 10px;
+    }
+
+    .dev-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .dev-logo-small {
+      width: 32px;
+      height: 32px;
+      filter: invert(1);
+      opacity: 0.9;
+    }
+
+    .dev-info h4 {
+      margin: 0 0 4px 0;
+      font-size: 14px;
+      color: #4CAF50;
+    }
+
+    .dev-subtitle {
+      margin: 0;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .dev-description {
+      font-size: 12px;
+      color: #FFD700;
+      margin-bottom: 12px;
+      line-height: 1.4;
+      background: rgba(255, 215, 0, 0.1);
+      padding: 8px;
+      border-radius: 6px;
+      border-left: 3px solid #FFD700;
+    }
+
+    .dev-links {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .dev-link {
+      display: inline-block;
+      color: #8BC34A;
+      text-decoration: none;
+      font-size: 11px;
+      padding: 4px 8px;
+      border: 1px solid rgba(139, 195, 74, 0.3);
+      border-radius: 12px;
+      transition: all 0.2s;
+      background: rgba(139, 195, 74, 0.1);
+    }
+
+    .dev-link:hover {
+      background: rgba(139, 195, 74, 0.2);
+      border-color: rgba(139, 195, 74, 0.6);
+      transform: translateX(2px);
+    }
+
+    .dev-link.email:hover {
+      background: rgba(255, 87, 34, 0.1);
+      border-color: rgba(255, 87, 34, 0.6);
+      color: #FF5722;
+    }
+
+    .dev-link.github:hover {
+      background: rgba(103, 58, 183, 0.1);
+      border-color: rgba(103, 58, 183, 0.6);
+      color: #673AB7;
+    }
+
+    .dev-link.project:hover {
+      background: rgba(33, 150, 243, 0.1);
+      border-color: rgba(33, 150, 243, 0.6);
+      color: #2196F3;
     }
   `]
 })
