@@ -16,12 +16,17 @@ npm run watch      # Watch mode development build
 npm test           # Run tests with Karma/Jasmine
 ```
 
-### Backend (Express)
+### Backend (Cloudflare Pages Functions)
+API routes live in `functions/api/game/` and use Cloudflare KV for storage:
+- `functions/api/game/save.ts` - POST /api/game/save
+- `functions/api/game/load.ts` - GET /api/game/load?userId=xxx
+
+### Cloudflare Deployment
 ```bash
-cd server
-npm run dev        # Dev server with hot reload (nodemon + ts-node)
-npm run build      # Compile TypeScript to dist/
-npm start          # Run compiled server (requires build first)
+npm run dev:cf     # Local dev with Pages Functions + KV emulation
+npm run build      # Production build
+npm run deploy     # Build and deploy to Cloudflare Pages
+npx wrangler login # Authenticate with Cloudflare
 ```
 
 ## Architecture
@@ -53,11 +58,11 @@ Each service is a singleton (`providedIn: 'root'`):
 - `emoji-renderer.service.ts` - Emoji-to-texture conversion with caching
 - `performance.service.ts` - FPS monitoring
 
-### Backend API (server/src/)
-Express server with save/load endpoints:
-- `POST /api/save` - Save game data
-- `GET /api/load/:userId` - Load save data
-- Data stored as JSON files
+### Backend API (functions/api/game/)
+Cloudflare Pages Functions with KV storage:
+- `POST /api/game/save` - Save game data to KV
+- `GET /api/game/load?userId=xxx` - Load save data from KV
+- Data stored in Cloudflare KV namespace `GAME_SAVES`
 
 ## Key Models (src/app/models/)
 
@@ -90,4 +95,4 @@ npx ng test --include=**/foo.spec.ts  # Run specific test file
 - Angular 20 standalone components (no NgModules)
 - SCSS for styling
 - Production budgets: 500kB warning, 1MB error for initial bundle
-- Vercel deployment configured
+- Cloudflare Pages deployment (wrangler.toml configured)

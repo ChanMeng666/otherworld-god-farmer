@@ -9,7 +9,7 @@ import { ISaveData } from '../models/save-data.model';
   providedIn: 'root'
 })
 export class SaveGameService {
-  private apiUrl = 'http://localhost:3000/api/game';
+  private apiUrl = '/api/game';
   private userId = 'player_' + Date.now(); // Generate unique player ID
   private autoSaveInterval: any;
   private lastSaveTime = 0;

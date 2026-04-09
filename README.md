@@ -6,18 +6,18 @@
 玩家扮演拥有"万能农具"神器的异世界来客，在荒地上创造理想村庄。<br/>
 使用 **Emoji** 作为游戏素材，**鼠标优先** 操作，一键 **免费** 部署你的农场世界。
 
-[在线试玩][vercel-link] · [项目文档][docs] · [问题反馈][github-issues-link] · [功能建议][github-issues-link]
+[在线试玩][pages-link] · [项目文档][docs] · [问题反馈][github-issues-link] · [功能建议][github-issues-link]
 
 <br/>
 
-[![🚀 开始游戏 🚀](https://img.shields.io/badge/🎮_开始游戏-点击体验-55b467?style=for-the-badge&logo=vercel&logoColor=white)][vercel-link]
+[![🚀 开始游戏 🚀](https://img.shields.io/badge/🎮_开始游戏-点击体验-55b467?style=for-the-badge&logo=cloudflare&logoColor=white)][pages-link]
 
 <br/>
 
 <!-- SHIELD GROUP -->
 
 [![][github-release-shield]][github-release-link]
-[![][vercel-shield]][vercel-link]
+[![][cloudflare-shield]][pages-link]
 [![][github-license-shield]][github-license-link]<br/>
 [![][github-contributors-shield]][github-contributors-link]
 [![][github-forks-shield]][github-forks-link]
@@ -65,16 +65,16 @@
  <img src="https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white"/>
  <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white"/>
  <img src="https://img.shields.io/badge/Pixi.js-FF3366?style=for-the-badge&logo=pixiv&logoColor=white"/>
- <img src="https://img.shields.io/badge/node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"/>
  <img src="https://img.shields.io/badge/rxjs-%23B7178C.svg?style=for-the-badge&logo=reactivex&logoColor=white"/>
- <img src="https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white"/>
+ <img src="https://img.shields.io/badge/Cloudflare_Pages-%23F38020.svg?style=for-the-badge&logo=cloudflare&logoColor=white"/>
+ <img src="https://img.shields.io/badge/Cloudflare_KV-%23F38020.svg?style=for-the-badge&logo=cloudflare&logoColor=white"/>
 
 </div>
 
 </div>
 
 > [!IMPORTANT]
-> 本项目展示了现代Web游戏开发实践。结合 Angular 19 与 Pixi.js 8 提供高性能2D渲染。特色包括完整的农场模拟系统、鼠标优先控制、Emoji视觉素材、实时存档系统。
+> 本项目展示了现代Web游戏开发实践。结合 Angular 20 与 Pixi.js 8 提供高性能2D渲染，部署在 Cloudflare Pages 全球 CDN 上。特色包括完整的农场模拟系统、鼠标优先控制、Emoji视觉素材、基于 Cloudflare KV 的实时存档系统。
 
 <details>
 <summary><kbd>📑 目录</kbd></summary>
@@ -111,7 +111,7 @@
 
 我们致力于创造一个充满乐趣的异世界农场模拟游戏。通过现代Web技术和创新的游戏设计，为玩家提供轻松愉快的田园生活体验。
 
-游戏采用 **全Emoji视觉风格**，无需任何外部素材资源。支持 **鼠标优先操作**，降低上手难度。包含完整的农场经营要素：种植、收获、建造、社交、探索。
+游戏采用 **全Emoji视觉风格**，无需任何外部素材资源。支持 **鼠标优先操作**，降低上手难度。包含完整的农场经营要素：种植、收获、建造、社交、探索。部署在 **Cloudflare Pages** 全球边缘网络，存档数据存储在 **Cloudflare KV** 分布式键值存储中。
 
 > [!NOTE]
 > - Node.js >= 18.0 必需
@@ -119,7 +119,7 @@
 > - 推荐分辨率 1920x1080 或更高
 > - 游戏自动保存进度
 
-| [![][demo-shield-badge]][vercel-link] | 无需安装！访问在线版本立即体验游戏。 |
+| [![][demo-shield-badge]][pages-link] | 无需安装！访问在线版本立即体验游戏。 |
 | :------------------------------------- | :----------------------------------- |
 
 > [!TIP]
@@ -212,7 +212,7 @@
     <tr>
       <td align="center" width="96">
         <img src="https://cdn.simpleicons.org/angular" width="48" height="48" alt="Angular" />
-        <br>Angular 19
+        <br>Angular 20
       </td>
       <td align="center" width="96">
         <img src="https://cdn.simpleicons.org/typescript" width="48" height="48" alt="TypeScript" />
@@ -223,98 +223,142 @@
         <br>Pixi.js 8
       </td>
       <td align="center" width="96">
-        <img src="https://cdn.simpleicons.org/nodedotjs" width="48" height="48" alt="Node.js" />
-        <br>Node.js 18
-      </td>
-      <td align="center" width="96">
         <img src="https://cdn.simpleicons.org/reactivex" width="48" height="48" alt="RxJS" />
         <br>RxJS 7
       </td>
       <td align="center" width="96">
-        <img src="https://cdn.simpleicons.org/vercel" width="48" height="48" alt="Vercel" />
-        <br>Vercel
+        <img src="https://cdn.simpleicons.org/cloudflare" width="48" height="48" alt="Cloudflare" />
+        <br>Cloudflare Pages
       </td>
     </tr>
   </table>
 </div>
 
 **前端技术栈：**
-- **框架**: Angular 19 (Standalone Components)
+- **框架**: Angular 20 (Standalone Components)
 - **渲染引擎**: Pixi.js 8 (WebGL 2D Graphics)
 - **语言**: TypeScript 5 严格模式
 - **状态管理**: RxJS + Services单例模式
-- **样式**: SCSS + Tailwind CSS
-- **构建工具**: Angular CLI + Webpack
+- **样式**: SCSS
+- **构建工具**: Angular CLI
 
 **后端技术栈：**
-- **运行时**: Node.js 18 LTS
-- **框架**: Express.js
-- **数据存储**: JSON文件系统
-- **API**: RESTful架构
+- **平台**: Cloudflare Pages Functions (边缘计算)
+- **数据存储**: Cloudflare KV (全球分布式键值存储)
+- **API**: RESTful架构，同域部署无需CORS
+
+**部署架构：**
+
+```mermaid
+graph LR
+    subgraph "用户浏览器"
+        A[Angular SPA]
+    end
+
+    subgraph "Cloudflare 全球边缘网络"
+        B[Pages CDN<br/>静态资源托管]
+        C[Pages Functions<br/>API 边缘计算]
+        D[KV Store<br/>游戏存档存储]
+    end
+
+    A -- "静态资源请求" --> B
+    A -- "/api/game/*" --> C
+    C -- "读写存档" --> D
+```
 
 **游戏系统架构：**
 
 ```mermaid
 graph TB
-    subgraph "游戏前端"
-        A[游戏画布 GameCanvas] --> B[Pixi.js渲染器]
-        B --> C[精灵管理]
-        C --> D[游戏世界]
+    subgraph "游戏前端 (Angular SPA)"
+        A[GameCanvasComponent<br/>Pixi.js 渲染] --> B[EmojiRendererService<br/>纹理缓存]
+        A --> C[游戏世界<br/>30x20 Tile Grid]
     end
-    
-    subgraph "状态管理"
-        E[GameDataService] --> F[玩家状态]
-        E --> G[世界数据]
-        E --> H[时间系统]
-        E --> I[库存系统]
+
+    subgraph "状态管理 (RxJS BehaviorSubject)"
+        E[GameDataService] --> F[PlayerState]
+        E --> G[WorldData]
+        E --> H[TimeState]
+        E --> I[InventoryState]
     end
-    
-    subgraph "游戏系统"
-        J[种植系统]
-        K[建造系统]
-        L[NPC系统]
-        M[事件系统]
-        N[音频系统]
+
+    subgraph "游戏系统 (Angular Services)"
+        J[CropService<br/>种植系统]
+        K[BuildingService<br/>建造系统]
+        L[NpcService<br/>NPC系统]
+        M[EventService<br/>随机事件]
     end
-    
-    subgraph "持久化"
-        O[存档服务]
-        P[后端API]
-        Q[文件存储]
+
+    subgraph "持久化 (Cloudflare)"
+        O[SaveGameService] -- "POST /api/game/save" --> P[Pages Function]
+        O -- "GET /api/game/load" --> P
+        P -- "KV put/get" --> Q[Cloudflare KV]
     end
-    
-    D --> E
+
+    C --> E
     E --> J
     E --> K
     E --> L
     E --> M
-    O --> P
-    P --> Q
+    E --> O
+```
+
+**数据流：**
+
+```mermaid
+sequenceDiagram
+    participant Player as 玩家浏览器
+    participant SPA as Angular SPA
+    participant Fn as Pages Function
+    participant KV as Cloudflare KV
+
+    Note over Player,KV: 保存游戏
+    Player->>SPA: 点击保存 / 自动保存
+    SPA->>SPA: GameDataService.gameState
+    SPA->>Fn: POST /api/game/save {userId, saveData}
+    Fn->>KV: KV.put("save:{userId}", data)
+    KV-->>Fn: OK
+    Fn-->>SPA: {success: true}
+    SPA-->>Player: 保存成功通知
+
+    Note over Player,KV: 加载游戏
+    Player->>SPA: 页面加载 / 点击加载
+    SPA->>Fn: GET /api/game/load?userId=xxx
+    Fn->>KV: KV.get("save:{userId}")
+    KV-->>Fn: JSON data
+    Fn-->>SPA: {success: true, saveData}
+    SPA->>SPA: GameDataService.loadGame(saveData)
+    SPA-->>Player: 游戏恢复
 ```
 
 **项目结构：**
 
 ```
-src/
-├── app/
-│   ├── components/        # UI组件
-│   │   ├── player-hud/   # HUD显示
-│   │   ├── inventory/    # 背包界面
-│   │   ├── tool-wheel/   # 工具轮盘
-│   │   └── ...
-│   ├── game/             # 游戏核心
-│   │   └── game-canvas/  # 主画布
-│   ├── models/           # 数据模型
-│   │   ├── player.model.ts
-│   │   ├── world.model.ts
-│   │   └── ...
-│   └── services/         # 业务服务
-│       ├── game-data.service.ts
-│       ├── world.service.ts
-│       └── ...
-└── backend/              # 后端服务
-    ├── routes/          # API路由
-    └── data/           # 存档数据
+otherworld-god-farmer/
+├── src/                          # Angular 前端源码
+│   ├── app/
+│   │   ├── components/           # UI组件
+│   │   │   ├── player-hud/       # HUD显示
+│   │   │   ├── inventory/        # 背包界面
+│   │   │   ├── tool-wheel/       # 工具轮盘
+│   │   │   └── ...
+│   │   ├── game/                 # 游戏核心
+│   │   │   └── game-canvas/      # Pixi.js 主画布
+│   │   ├── models/               # 数据模型 (ISaveData, IPlayerState, ...)
+│   │   └── services/             # 业务服务 (GameData, World, Crop, ...)
+│   ├── index.html
+│   ├── main.ts
+│   └── styles.scss
+├── functions/                    # Cloudflare Pages Functions (后端API)
+│   ├── api/game/
+│   │   ├── save.ts               # POST /api/game/save → KV存储
+│   │   └── load.ts               # GET /api/game/load → KV读取
+│   └── tsconfig.json
+├── public/                       # 静态资源 (logo, favicon)
+├── wrangler.toml                 # Cloudflare Pages 配置
+├── angular.json                  # Angular 构建配置
+├── package.json
+└── tsconfig.json
 ```
 
 ## ⚡️ 性能优化
@@ -356,43 +400,31 @@ cd otherworld-god-farmer
 **2. 安装依赖**
 
 ```bash
-# 安装前端依赖
 npm install
-
-# 安装后端依赖
-cd backend
-npm install
-cd ..
 ```
 
 **3. 启动开发服务器**
 
 ```bash
-# 启动前端 (新终端)
+# 方式一：仅前端开发（不含API）
 npm start
-# 前端运行在 http://localhost:4201
+# 运行在 http://localhost:4200
 
-# 启动后端 (新终端)
-cd backend
-npm start
-# 后端运行在 http://localhost:3000
+# 方式二：完整本地环境（推荐，含 Pages Functions + KV 模拟）
+npm run dev:cf
+# 运行在 http://localhost:8788
 ```
 
-🎉 **成功！** 打开 [http://localhost:4201](http://localhost:4201) 开始游戏。
+🎉 **成功！** 打开浏览器开始游戏。
 
 ### 开发模式
 
 ```bash
-# 开发命令
-npm start          # 启动前端开发服务器
+npm start          # Angular 开发服务器
+npm run dev:cf     # Cloudflare Pages 完整本地环境
 npm run build      # 构建生产版本
-npm run test       # 运行测试
-npm run lint       # 代码检查
-
-# 后端命令
-cd backend
-npm start          # 启动后端服务
-npm run dev        # 开发模式（热重载）
+npm run deploy     # 构建并部署到 Cloudflare Pages
+npm test           # 运行测试 (Karma + Jasmine)
 ```
 
 ## 🎮 游戏指南
@@ -437,42 +469,83 @@ npm run dev        # 开发模式（热重载）
 
 ## 🛳 部署
 
-### Vercel部署（推荐）
+### Cloudflare Pages 部署（推荐）
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FChanMeng666%2Fotherworld-god-farmer)
+本项目部署在 Cloudflare Pages 上，前端静态资源通过全球 CDN 分发，后端 API 以 Pages Functions 形式运行在边缘节点。
 
-### 手动部署
+**一键部署：**
 
 ```bash
-# 构建生产版本
-npm run build
+# 1. 安装依赖
+npm install
 
-# 部署dist目录到任何静态托管服务
+# 2. 登录 Cloudflare
+npx wrangler login
+
+# 3. 构建并部署
+npm run deploy
+```
+
+**首次部署需额外操作：**
+
+```bash
+# 创建 KV 命名空间（用于游戏存档）
+npx wrangler kv namespace create GAME_SAVES
+# 将输出的 id 填入 wrangler.toml
+
+# 创建 Pages 项目
+npx wrangler pages project create otherworld-god-farmer --production-branch master
+
+# 通过 Cloudflare API 绑定 KV（替换 <ACCOUNT_ID> 和 <KV_ID>）
+curl -X PATCH "https://api.cloudflare.com/client/v4/accounts/<ACCOUNT_ID>/pages/projects/otherworld-god-farmer" \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"deployment_configs":{"production":{"kv_namespaces":{"GAME_SAVES":{"namespace_id":"<KV_ID>"}}}}}'
+```
+
+```mermaid
+graph LR
+    A[npm run deploy] --> B[Angular Build]
+    B --> C[dist/client/browser/]
+    C --> D[wrangler pages deploy]
+    D --> E[Cloudflare Pages CDN]
+    D --> F[Pages Functions 编译]
+    F --> G[边缘节点 API]
+    G --> H[KV 存档存储]
 ```
 
 ## 📖 API文档
 
+后端 API 以 Cloudflare Pages Functions 形式部署，与前端同域，数据存储在 Cloudflare KV 中。
+
 **存档系统API：**
 
-| 方法 | 端点 | 描述 | 认证 |
+| 方法 | 端点 | 描述 | 存储 |
 |------|------|------|------|
-| `POST` | `/api/save` | 保存游戏 | ❌ |
-| `GET` | `/api/load/:userId` | 加载存档 | ❌ |
-| `GET` | `/api/saves/:userId` | 获取存档列表 | ❌ |
-| `DELETE` | `/api/save/:saveId` | 删除存档 | ❌ |
+| `POST` | `/api/game/save` | 保存游戏数据 | Cloudflare KV |
+| `GET` | `/api/game/load?userId=xxx` | 加载游戏存档 | Cloudflare KV |
 
 **示例请求：**
 
 ```javascript
 // 保存游戏
-fetch('http://localhost:3000/api/save', {
+fetch('/api/game/save', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    userId: 'player123',
+    userId: 'player_1234567890',
     saveData: gameState
   })
 });
+
+// 加载游戏
+fetch('/api/game/load?userId=player_1234567890')
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      // data.saveData 包含完整游戏状态
+    }
+  });
 ```
 
 ## 🤝 贡献指南
@@ -546,9 +619,9 @@ fetch('http://localhost:3000/api/save', {
 [back-to-top]: https://img.shields.io/badge/-回到顶部-151515?style=flat-square
 
 <!-- Project Links -->
-[vercel-link]: https://otherworld-god-farmer.vercel.app/
+[pages-link]: https://otherworld-god-farmer.pages.dev/
 [docs]: https://github.com/ChanMeng666/otherworld-god-farmer#readme
-[demo-link]: https://otherworld-god-farmer.vercel.app/
+[demo-link]: https://otherworld-god-farmer.pages.dev/
 
 <!-- GitHub Links -->
 [github-issues-link]: https://github.com/ChanMeng666/otherworld-god-farmer/issues
@@ -560,14 +633,14 @@ fetch('http://localhost:3000/api/save', {
 
 <!-- Shield Badges -->
 [github-release-shield]: https://img.shields.io/github/v/release/ChanMeng666/otherworld-god-farmer?color=369eff&labelColor=black&logo=github&style=flat-square
-[vercel-shield]: https://img.shields.io/badge/vercel-在线-55b467?labelColor=black&logo=vercel&style=flat-square
+[cloudflare-shield]: https://img.shields.io/badge/cloudflare-在线-F38020?labelColor=black&logo=cloudflare&style=flat-square
 [github-contributors-shield]: https://img.shields.io/github/contributors/ChanMeng666/otherworld-god-farmer?color=c4f042&labelColor=black&style=flat-square
 [github-forks-shield]: https://img.shields.io/github/forks/ChanMeng666/otherworld-god-farmer?color=8ae8ff&labelColor=black&style=flat-square
 [github-stars-shield]: https://img.shields.io/github/stars/ChanMeng666/otherworld-god-farmer?color=ffcb47&labelColor=black&style=flat-square
 [github-issues-shield]: https://img.shields.io/github/issues/ChanMeng666/otherworld-god-farmer?color=ff80eb&labelColor=black&style=flat-square
 [github-license-shield]: https://img.shields.io/badge/license-MIT-white?labelColor=black&style=flat-square
 
-[demo-shield-badge]: https://img.shields.io/badge/在线试玩-ONLINE-55b467?labelColor=black&logo=vercel&style=for-the-badge
+[demo-shield-badge]: https://img.shields.io/badge/在线试玩-ONLINE-F38020?labelColor=black&logo=cloudflare&style=for-the-badge
 
 <!-- Social Share Links -->
 [share-x-link]: https://x.com/intent/tweet?hashtags=游戏开发&text=发现了一个有趣的农场游戏项目&url=https%3A%2F%2Fgithub.com%2FChanMeng666%2Fotherworld-god-farmer

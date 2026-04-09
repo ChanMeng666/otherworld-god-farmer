@@ -1,0 +1,9 @@
+name = "otherworld-god-farmer"
+compatibility_date = "2026-04-01"
+
+pages_build_output_dir = "dist/client/browser"
+
+[[kv_namespaces]]
+binding = "GAME_SAVES"
+id = "b00d511df434426c943e7afeda478758"
+preview_id = "9b0e67d493f344ceb17843b5b6aae806"

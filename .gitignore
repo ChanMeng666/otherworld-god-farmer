@@ -49,3 +49,7 @@ server/saves
 # Environment variables
 .env
 .env.local
+
+# Cloudflare
+.wrangler
+.dev.vars
