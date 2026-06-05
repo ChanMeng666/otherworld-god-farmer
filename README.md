@@ -657,3 +657,17 @@ fetch('/api/game/load?userId=player_1234567890')
 
 <!-- Images -->
 [image-star]: https://img.shields.io/github/stars/ChanMeng666/otherworld-god-farmer?style=social
+---
+
+<!-- CHAN MENG PERSONAL BRAND -->
+<div align="center">
+  <a href="https://github.com/ChanMeng666" target="_blank">
+    <img src="./.github/brand/chan-meng-logo.svg" alt="Chan Meng" width="160" />
+  </a>
+
+  <p><strong>Chan Meng</strong><br/>Need a custom app like this one? I build them — let's talk.</p>
+
+  <a href="mailto:chanmeng.dev@gmail.com"><img src="https://img.shields.io/badge/Email-chanmeng.dev@gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white" alt="Email Chan Meng"/></a>
+  <a href="https://github.com/ChanMeng666"><img src="https://img.shields.io/badge/GitHub-ChanMeng666-181717?style=flat-square&logo=github&logoColor=white" alt="Chan Meng on GitHub"/></a>
+</div>
+<!-- /CHAN MENG PERSONAL BRAND -->
