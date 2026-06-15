@@ -1,0 +1,50 @@
+{
+  "project": "otherworld-god-farmer",
+  "baseUrl": "https://otherworld-god-farmer.pages.dev/",
+  "reducedMotion": "no-preference",
+  "viewports": {
+    "desktop": { "width": 1280, "height": 800, "deviceScaleFactor": 2 },
+    "mobile": { "width": 390, "height": 844, "deviceScaleFactor": 3, "isMobile": true }
+  },
+  "pages": [
+    {
+      "label": "hero",
+      "url": "/",
+      "viewport": "desktop",
+      "fullPage": false,
+      "before": [
+        { "action": "wait", "ms": 5000 }
+      ]
+    },
+    {
+      "label": "gameplay",
+      "url": "/",
+      "viewport": "desktop",
+      "fullPage": false,
+      "before": [
+        { "action": "wait", "ms": 7000 }
+      ]
+    },
+    {
+      "label": "mobile-hero",
+      "url": "/",
+      "viewport": "mobile",
+      "fullPage": false,
+      "before": [
+        { "action": "wait", "ms": 5000 }
+      ]
+    }
+  ],
+  "demo": {
+    "size": { "width": 1280, "height": 720 },
+    "stepPauseMs": 800,
+    "steps": [
+      { "action": "goto", "url": "/" },
+      { "action": "wait", "ms": 5000 },
+      { "action": "wait", "ms": 3000 },
+      { "action": "wait", "ms": 3000 },
+      { "action": "wait", "ms": 3000 },
+      { "action": "wait", "ms": 2000 }
+    ]
+  }
+}
